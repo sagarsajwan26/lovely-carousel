@@ -9,7 +9,7 @@ import { ROMANTIC_SONGS } from '@/data/songs';
  * Features:
  * - Direct, rock-solid audio loading and playback
  * - Throttled time updates to prevent UI thrashing on low-end devices
- * - Error recovery and autoplay resume handling
+ * - Immediate synchronous play invocation to satisfy mobile browser autoplay policies
  */
 class AudioEngine {
   private static instance: AudioEngine;
@@ -82,30 +82,40 @@ class AudioEngine {
     this.isInitialized = true;
   }
 
-  public async play(): Promise<void> {
+  public play(song?: Song): void {
     useAudioStore.getState().setHasInteracted(true);
-    const { currentSong, volume, isMuted } = useAudioStore.getState();
-    const activeSong = currentSong || ROMANTIC_SONGS[0];
-
     if (!this.audio) {
       this.initAudio();
     }
+    if (!this.audio) return;
 
-    if (this.audio) {
-      this.audio.volume = isMuted ? 0 : volume;
+    const { currentSong, volume, isMuted } = useAudioStore.getState();
+    const activeSong = song || currentSong || ROMANTIC_SONGS[0];
 
-      // If audio element has no source or source changed, load it
-      if (!this.audio.src || !this.audio.src.endsWith(activeSong.audioUrl)) {
-        this.audio.src = activeSong.audioUrl;
-        this.audio.load();
-      }
+    this.audio.volume = isMuted ? 0 : volume;
 
-      try {
-        await this.audio.play();
-        useAudioStore.getState().setIsPlaying(true);
-      } catch (err) {
-        console.warn('Audio play request error:', err);
-      }
+    // Check if source matches activeSong
+    const currentSrc = this.audio.src;
+    const isTargetLoaded = currentSrc && (
+      currentSrc.endsWith(activeSong.audioUrl) ||
+      currentSrc.endsWith(encodeURI(activeSong.audioUrl))
+    );
+
+    if (!isTargetLoaded) {
+      this.audio.src = activeSong.audioUrl;
+      useAudioStore.getState().setCurrentSong(activeSong);
+    }
+
+    const playPromise = this.audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          useAudioStore.getState().setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.warn('Audio play request error:', err);
+          useAudioStore.getState().setIsPlaying(false);
+        });
     }
   }
 
@@ -116,41 +126,40 @@ class AudioEngine {
     useAudioStore.getState().setIsPlaying(false);
   }
 
-  public togglePlay(): void {
+  public togglePlay(song?: Song): void {
     const { isPlaying } = useAudioStore.getState();
     if (isPlaying) {
       this.pause();
     } else {
-      this.play();
+      this.play(song);
     }
   }
 
   public loadAndPlay(song: Song): void {
     useAudioStore.getState().setHasInteracted(true);
     useAudioStore.getState().setCurrentSong(song);
+    useAudioStore.getState().setCurrentTime(0);
+    useAudioStore.getState().setDuration(song.duration);
 
     if (!this.audio) {
       this.initAudio();
     }
+    if (!this.audio) return;
 
-    if (this.audio) {
-      this.audio.src = song.audioUrl;
-      this.audio.load();
-      this.audio.currentTime = 0;
-      this.lastUpdateTime = performance.now();
-      useAudioStore.getState().setCurrentTime(0);
-      useAudioStore.getState().setDuration(song.duration);
+    this.audio.src = song.audioUrl;
+    this.audio.currentTime = 0;
+    this.lastUpdateTime = performance.now();
 
-      const playPromise = this.audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            useAudioStore.getState().setIsPlaying(true);
-          })
-          .catch((err) => {
-            console.warn('Audio playback start requires user interaction:', err);
-          });
-      }
+    const playPromise = this.audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          useAudioStore.getState().setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.warn('Audio playback start requires user interaction:', err);
+          useAudioStore.getState().setIsPlaying(false);
+        });
     }
   }
 

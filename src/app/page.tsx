@@ -45,11 +45,7 @@ export default function HomePage() {
     if (playing) {
       audioEngine.pause();
     } else {
-      if (active) {
-        audioEngine.play();
-      } else {
-        audioEngine.loadAndPlay(song);
-      }
+      audioEngine.play(active || song);
     }
   }, [song]);
 
@@ -96,9 +92,9 @@ export default function HomePage() {
   const handleLoadingComplete = useCallback(() => setIsLoading(false), []);
 
   return (
-    <main className="relative min-h-screen w-full bg-[#12071C] text-white flex flex-col justify-between items-center overflow-x-hidden pt-6 pb-28 select-none contain-paint">
+    <main className="relative min-h-screen w-full bg-[#12071C] text-white flex flex-col justify-between items-center overflow-x-hidden pt-6 pb-28 select-none">
       {/* 0. Introductory Lovely Loading Screen with 3D Heart & Shared Quote Landing */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {isLoading && (
           <LovelyLoadingScreen onLoadingComplete={handleLoadingComplete} />
         )}
@@ -108,7 +104,7 @@ export default function HomePage() {
       <PlayerBackground activeCoverImage={song.coverImage} />
 
       {/* 2. Main Central Device Container */}
-      <div className="relative z-10 w-full max-w-[390px] px-4 flex flex-col justify-between flex-1">
+      <div className="relative z-10 w-full max-w-[390px] px-4 flex flex-col justify-between flex-1 pointer-events-auto">
         {/* Main Player Section (Artwork, Title/Artist/Quote, Scrubber, Controls, Next Up) */}
         <div className="flex flex-col items-center">
           {/* Main Artwork with Smooth Slide Animation, Preload & Touch Swipe Support */}
@@ -122,7 +118,7 @@ export default function HomePage() {
           />
 
           {/* Song Info & Romantic Quote (Smooth Landing Destination from Loading) */}
-          <PlayerInfo song={song} />
+          <PlayerInfo song={song} showQuote={!isLoading} />
 
           {/* Scrubber & 5-Button Controls */}
           <PlayerControls
