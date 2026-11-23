@@ -14,7 +14,6 @@ import { PlayerNextUp } from '@/components/player/PlayerNextUp';
 import { PlayerBottomNav } from '@/components/player/PlayerBottomNav';
 import { LovelyLoadingScreen } from '@/components/player/LovelyLoadingScreen';
 
-// Dynamic import for modal drawer: Saves critical path bundle size
 const PlayerDrawer = dynamic(
   () => import('@/components/player/PlayerDrawer').then((m) => m.PlayerDrawer),
   { ssr: false }
@@ -31,15 +30,12 @@ export default function HomePage() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [slideDirection, setSlideDirection] = useState(1);
 
-  // Active Song
   const song = currentSong || ROMANTIC_SONGS[selectedSongIndex] || ROMANTIC_SONGS[0];
 
-  // Next Song
   const currentIndex = ROMANTIC_SONGS.findIndex((s) => s.id === song.id);
   const validIndex = currentIndex !== -1 ? currentIndex : selectedSongIndex;
   const nextSongItem = ROMANTIC_SONGS[(validIndex + 1) % ROMANTIC_SONGS.length];
 
-  // Direct, rock-solid Play / Pause toggle
   const handleTogglePlay = useCallback(() => {
     const { isPlaying: playing, currentSong: active } = useAudioStore.getState();
     if (playing) {
@@ -49,7 +45,6 @@ export default function HomePage() {
     }
   }, [song]);
 
-  // Direct Next Song trigger (used by Controls, Artwork swipe, and Next Song Bar)
   const handleNext = useCallback(() => {
     setSlideDirection(1);
     const { selectedSongIndex: currIdx, setSelectedSongIndex } = useAudioStore.getState();
@@ -61,7 +56,6 @@ export default function HomePage() {
     audioEngine.loadAndPlay(targetSong);
   }, [isShuffle]);
 
-  // Direct Previous Song trigger
   const handlePrev = useCallback(() => {
     setSlideDirection(-1);
     const { selectedSongIndex: currIdx, setSelectedSongIndex } = useAudioStore.getState();
@@ -93,21 +87,19 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen w-full bg-[#12071C] text-white flex flex-col justify-between items-center overflow-x-hidden pt-6 pb-28 select-none">
-      {/* 0. Introductory Lovely Loading Screen with 3D Heart & Shared Quote Landing */}
+
       <AnimatePresence>
         {isLoading && (
           <LovelyLoadingScreen onLoadingComplete={handleLoadingComplete} />
         )}
       </AnimatePresence>
 
-      {/* 1. Atmospheric Romantic Background with Dynamic Song Imagery */}
       <PlayerBackground activeCoverImage={song.coverImage} />
 
-      {/* 2. Main Central Device Container */}
       <div className="relative z-10 w-full max-w-[390px] px-4 flex flex-col justify-between flex-1 pointer-events-auto">
-        {/* Main Player Section (Artwork, Title/Artist/Quote, Scrubber, Controls, Next Up) */}
+
         <div className="flex flex-col items-center">
-          {/* Main Artwork with Smooth Slide Animation, Preload & Touch Swipe Support */}
+
           <PlayerArtwork
             song={song}
             nextSongCover={nextSongItem?.coverImage}
@@ -117,10 +109,8 @@ export default function HomePage() {
             onPrev={handlePrev}
           />
 
-          {/* Song Info & Romantic Quote (Smooth Landing Destination from Loading) */}
           <PlayerInfo song={song} showQuote={!isLoading} />
 
-          {/* Scrubber & 5-Button Controls */}
           <PlayerControls
             isShuffle={isShuffle}
             onTogglePlay={handleTogglePlay}
@@ -130,7 +120,6 @@ export default function HomePage() {
             onSeek={handleSeek}
           />
 
-          {/* Floating "Next Song" Glass Pill (Play Next & Playlist Menu) */}
           {nextSongItem && (
             <PlayerNextUp
               nextSong={nextSongItem}
@@ -140,7 +129,6 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Floating Bottom Navigation Glass Dock */}
         <PlayerBottomNav
           isFavorited={isFavorited}
           onOpenPlaylist={handleOpenPlaylist}
@@ -148,7 +136,6 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Slide-Up Playlist Drawer Modal (Lazy Loaded) */}
       {showDrawer && (
         <PlayerDrawer
           isOpen={showDrawer}

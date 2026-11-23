@@ -13,7 +13,6 @@ interface PlayerDrawerProps {
   onSelectSong: (index: number, song: Song) => void;
 }
 
-// Optimized Song Item Row with content-visibility for ultra-smooth scrolling on low-end devices
 const SongItemRow = memo(function SongItemRow({
   item,
   index,

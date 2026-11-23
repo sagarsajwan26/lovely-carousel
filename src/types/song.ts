@@ -1,5 +1,5 @@
 export interface LyricLine {
-  time: number; // in seconds
+  time: number;
   text: string;
   translation?: string;
 }
@@ -23,7 +23,7 @@ export interface Song {
     secondary: string;
     glow: string;
   };
-  duration: number; // in seconds
+  duration: number;
   lyricsSynced: boolean;
   lyrics: LyricLine[];
   lyricsSource: string;

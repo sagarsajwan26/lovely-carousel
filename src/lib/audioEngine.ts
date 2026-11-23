@@ -4,13 +4,6 @@ import { useAudioStore } from './audioStore';
 import { Song } from '@/types/song';
 import { ROMANTIC_SONGS } from '@/data/songs';
 
-/**
- * Production-Grade Robust HTML5 Audio Engine
- * Features:
- * - Direct, rock-solid audio loading and playback
- * - Throttled time updates to prevent UI thrashing on low-end devices
- * - Immediate synchronous play invocation to satisfy mobile browser autoplay policies
- */
 class AudioEngine {
   private static instance: AudioEngine;
   private audio: HTMLAudioElement | null = null;
@@ -36,7 +29,6 @@ class AudioEngine {
     const audio = new Audio();
     audio.preload = 'auto';
 
-    // Throttled timeupdate: max 4 updates/sec (220ms) to prevent re-render thrashing
     audio.addEventListener('timeupdate', () => {
       const now = performance.now();
       if (now - this.lastUpdateTime > 220) {
@@ -94,7 +86,6 @@ class AudioEngine {
 
     this.audio.volume = isMuted ? 0 : volume;
 
-    // Check if source matches activeSong
     const currentSrc = this.audio.src;
     const isTargetLoaded = currentSrc && (
       currentSrc.endsWith(activeSong.audioUrl) ||

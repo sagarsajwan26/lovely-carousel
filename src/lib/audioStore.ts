@@ -14,8 +14,7 @@ interface AudioStoreState {
   selectedSongIndex: number;
   isTransitioning: boolean;
   carouselRotationPaused: boolean;
-  
-  // Actions
+
   setCurrentSong: (song: Song) => void;
   setIsPlaying: (playing: boolean) => void;
   setCurrentTime: (time: number) => void;

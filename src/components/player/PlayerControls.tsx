@@ -45,7 +45,7 @@ export const PlayerControls = memo(function PlayerControls({
 
   return (
     <div className="w-full mt-4 pointer-events-auto select-none contain-layout">
-      {/* 1. Liquid Scrubber / Progress Bar */}
+
       <div className="relative flex items-center w-full">
         <input
           type="range"
@@ -58,15 +58,13 @@ export const PlayerControls = memo(function PlayerControls({
         />
       </div>
 
-      {/* Timestamps */}
       <div className="flex justify-between text-[11px] font-mono text-white/60 mt-1.5 tabular-nums">
         <span>{formatTime(currentTime)}</span>
         <span>{formatTime(duration)}</span>
       </div>
 
-      {/* 2. Playback Controls Row (Optimized CSS Frosted Glass without Backdrop Blur Cascades) */}
       <div className="w-full flex items-center justify-between mt-3 px-1">
-        {/* Shuffle Button */}
+
         <button
           type="button"
           onClick={onToggleShuffle}
@@ -81,7 +79,6 @@ export const PlayerControls = memo(function PlayerControls({
           <Shuffle className="w-4 h-4 pointer-events-none" />
         </button>
 
-        {/* Previous Button */}
         <button
           type="button"
           onClick={onPrev}
@@ -92,7 +89,6 @@ export const PlayerControls = memo(function PlayerControls({
           <SkipBack className="w-5 h-5 fill-white pointer-events-none" />
         </button>
 
-        {/* Large Center Play/Pause Button with Glowing Hot-Pink Ring */}
         <button
           type="button"
           onClick={onTogglePlay}
@@ -107,7 +103,6 @@ export const PlayerControls = memo(function PlayerControls({
           )}
         </button>
 
-        {/* Next Button */}
         <button
           type="button"
           onClick={onNext}
@@ -118,7 +113,6 @@ export const PlayerControls = memo(function PlayerControls({
           <SkipForward className="w-5 h-5 fill-white pointer-events-none" />
         </button>
 
-        {/* Repeat Button */}
         <button
           type="button"
           onClick={toggleRepeat}

@@ -67,12 +67,11 @@ export const PlayerArtwork = memo(function PlayerArtwork({
 
   return (
     <div className="w-full flex justify-center mt-2 relative select-none">
-      {/* Background preloading for next song artwork */}
+
       {nextSongCover && (
         <link rel="preload" as="image" href={nextSongCover} />
       )}
 
-      {/* Glossy Liquid Glass Frame without CPU/GPU Blur Bottlenecks */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -89,7 +88,7 @@ export const PlayerArtwork = memo(function PlayerArtwork({
             exit="exit"
             className="relative w-full h-full will-change-transform transform-gpu"
           >
-            {/* Cover Image */}
+
             <Image
               src={song.coverImage}
               alt={song.title}
@@ -100,13 +99,10 @@ export const PlayerArtwork = memo(function PlayerArtwork({
               className="object-cover pointer-events-none"
             />
 
-            {/* Specular Liquid Rim Highlight */}
             <div className="absolute inset-0 rounded-[34px] pointer-events-none ring-1 ring-inset ring-white/40 bg-gradient-to-tr from-black/50 via-transparent to-white/20" />
 
-            {/* Dark Vignette Overlay for Crisp Typography */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/35 pointer-events-none" />
 
-            {/* Top Text: ORIGINAL SCORE FROM THE... */}
             <div className="absolute top-4 left-5 right-5 text-left pointer-events-none">
               <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-pink-300 font-bold block drop-shadow-sm">
                 ORIGINAL SCORE FROM THE
@@ -116,7 +112,6 @@ export const PlayerArtwork = memo(function PlayerArtwork({
               </span>
             </div>
 
-            {/* Bottom Floating Romantic Badge */}
             <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between pointer-events-none">
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 border border-white/20">
                 <span className="w-2 h-2 rounded-full bg-[#FF2D6C]" />

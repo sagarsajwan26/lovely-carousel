@@ -15,17 +15,15 @@ export const PlayerInfo = memo(function PlayerInfo({
 }: PlayerInfoProps) {
   return (
     <div className="w-full text-left mt-3.5 select-none contain-layout">
-      {/* 1. Song Title */}
+
       <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-tight">
         {song.title}
       </h1>
 
-      {/* 2. Artist Name */}
       <p className="text-sm font-medium text-white/70 mt-0.5">
         {song.artist}
       </p>
 
-      {/* 3. Romantic Cursive Italic Quote with Shared layoutId for Smooth Landing Animation */}
       {showQuote && (
         <motion.div
           layoutId="romantic-quote"

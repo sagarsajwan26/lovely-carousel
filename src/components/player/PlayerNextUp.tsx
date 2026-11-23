@@ -22,7 +22,7 @@ export const PlayerNextUp = memo(function PlayerNextUp({
       className="w-full rounded-2xl bg-[#1D0C2E]/85 hover:bg-[#25103A]/90 active:scale-[0.99] cursor-pointer border border-white/20 p-2.5 mt-3 flex items-center justify-between shadow-lg select-none transform-gpu contain-paint transition-all group"
       title="Click to play next song"
     >
-      {/* 1. Left Thumbnail & Track Info */}
+
       <div className="flex items-center gap-2.5 truncate flex-1 mr-2 pointer-events-none">
         <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/20 flex-shrink-0 bg-black/40">
           <Image
@@ -47,9 +47,8 @@ export const PlayerNextUp = memo(function PlayerNextUp({
         </div>
       </div>
 
-      {/* 2. Right Action Controls */}
       <div className="flex items-center gap-2">
-        {/* Play Next Pill Button */}
+
         <button
           type="button"
           onClick={(e) => {
@@ -63,7 +62,6 @@ export const PlayerNextUp = memo(function PlayerNextUp({
           <span className="pointer-events-none">Play Next</span>
         </button>
 
-        {/* View Queue Pill Button */}
         <button
           type="button"
           onClick={(e) => {
