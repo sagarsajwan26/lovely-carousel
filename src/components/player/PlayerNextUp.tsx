@@ -19,12 +19,12 @@ export const PlayerNextUp = memo(function PlayerNextUp({
   return (
     <div
       onClick={onPlayNext}
-      className="w-full rounded-2xl bg-white/[0.09] hover:bg-white/[0.14] active:scale-[0.99] cursor-pointer backdrop-blur-md border border-white/20 p-2.5 mt-3 flex items-center justify-between shadow-lg select-none transform-gpu contain-paint transition-all group"
+      className="w-full rounded-2xl bg-[#1D0C2E]/85 hover:bg-[#25103A]/90 active:scale-[0.99] cursor-pointer border border-white/20 p-2.5 mt-3 flex items-center justify-between shadow-lg select-none transform-gpu contain-paint transition-all group"
       title="Click to play next song"
     >
       {/* 1. Left Thumbnail & Track Info */}
       <div className="flex items-center gap-2.5 truncate flex-1 mr-2 pointer-events-none">
-        <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/20 flex-shrink-0">
+        <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-white/20 flex-shrink-0 bg-black/40">
           <Image
             src={nextSong.coverImage}
             alt={nextSong.title}
@@ -56,7 +56,7 @@ export const PlayerNextUp = memo(function PlayerNextUp({
             e.stopPropagation();
             onPlayNext();
           }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FF2D6C]/85 hover:bg-[#FF2D6C] text-white text-xs font-semibold border border-white/25 active:scale-90 transition-all shadow-md transform-gpu"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FF2D6C] hover:bg-[#FF4B7A] text-white text-xs font-semibold border border-white/25 active:scale-90 transition-all shadow-md transform-gpu"
           title="Play next song immediately"
         >
           <Play className="w-3 h-3 fill-white" />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Song } from '@/types/song';
@@ -16,28 +16,26 @@ interface PlayerArtworkProps {
 
 const slideVariants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 100 : -100,
+    x: direction > 0 ? 80 : -80,
     opacity: 0,
-    scale: 0.95,
+    scale: 0.96,
   }),
   center: {
     x: 0,
     opacity: 1,
     scale: 1,
     transition: {
-      x: { type: 'spring', stiffness: 280, damping: 28 },
-      opacity: { duration: 0.3 },
-      scale: { duration: 0.3 },
+      duration: 0.28,
+      ease: [0.25, 1, 0.5, 1],
     },
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? -100 : 100,
+    x: direction > 0 ? -80 : 80,
     opacity: 0,
-    scale: 0.95,
+    scale: 0.96,
     transition: {
-      x: { type: 'spring', stiffness: 280, damping: 28 },
-      opacity: { duration: 0.22 },
-      scale: { duration: 0.22 },
+      duration: 0.22,
+      ease: [0.25, 1, 0.5, 1],
     },
   }),
 };
@@ -50,14 +48,37 @@ export const PlayerArtwork = memo(function PlayerArtwork({
   onNext,
   onPrev,
 }: PlayerArtworkProps) {
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = e.changedTouches[0].clientX - touchStartX.current;
+    if (diff < -40) {
+      onNext?.();
+    } else if (diff > 40) {
+      onPrev?.();
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <div className="w-full flex justify-center mt-2 relative select-none">
-      {/* Preload Next Track's Image in background for Instant Zero-Lag Transitions */}
+      {/* Background preloading for next song artwork */}
       {nextSongCover && (
         <link rel="preload" as="image" href={nextSongCover} />
       )}
 
-      <div className="relative w-full aspect-square rounded-[38px] overflow-hidden border-[3px] border-white/35 shadow-[0_16px_45px_rgba(255,45,108,0.35),inset_0_2px_12px_rgba(255,255,255,0.35)] bg-[#180B24]/95 backdrop-blur-md transform-gpu contain-paint">
+      {/* Glossy Liquid Glass Frame without CPU/GPU Blur Bottlenecks */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onClick={onTogglePlay}
+        className="relative w-full aspect-square rounded-[36px] overflow-hidden border-[2.5px] border-white/30 shadow-[0_12px_40px_rgba(255,45,108,0.25),inset_0_1px_8px_rgba(255,255,255,0.3)] bg-[#1A0B28] cursor-pointer transform-gpu contain-paint"
+      >
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={song.id}
@@ -66,22 +87,9 @@ export const PlayerArtwork = memo(function PlayerArtwork({
             initial="enter"
             animate="center"
             exit="exit"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.22}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -45 || info.velocity.x < -300) {
-                onNext?.();
-              } else if (info.offset.x > 45 || info.velocity.x > 300) {
-                onPrev?.();
-              } else if (Math.abs(info.offset.x) < 5) {
-                onTogglePlay();
-              }
-            }}
-            onClick={onTogglePlay}
-            className="relative w-full h-full cursor-grab active:cursor-grabbing group will-change-transform transform-gpu"
+            className="relative w-full h-full will-change-transform transform-gpu"
           >
-            {/* Cover Image: Responsive, AVIF/WebP enabled, optimized quality */}
+            {/* Cover Image */}
             <Image
               src={song.coverImage}
               alt={song.title}
@@ -89,18 +97,18 @@ export const PlayerArtwork = memo(function PlayerArtwork({
               priority
               quality={80}
               sizes="(max-width: 640px) 90vw, 380px"
-              className="object-cover pointer-events-none group-hover:scale-105 transition-transform duration-700"
+              className="object-cover pointer-events-none"
             />
 
-            {/* Specular Liquid Glass Rim Highlight */}
-            <div className="absolute inset-0 rounded-[35px] pointer-events-none ring-1 ring-inset ring-white/50 bg-gradient-to-tr from-black/60 via-transparent to-white/30" />
+            {/* Specular Liquid Rim Highlight */}
+            <div className="absolute inset-0 rounded-[34px] pointer-events-none ring-1 ring-inset ring-white/40 bg-gradient-to-tr from-black/50 via-transparent to-white/20" />
 
-            {/* Dark Vignette Overlay for Typography */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40 pointer-events-none" />
+            {/* Dark Vignette Overlay for Crisp Typography */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/35 pointer-events-none" />
 
             {/* Top Text: ORIGINAL SCORE FROM THE... */}
-            <div className="absolute top-5 left-5 right-5 text-left pointer-events-none">
-              <span className="text-[9px] font-mono tracking-[0.22em] uppercase text-pink-300 font-bold block drop-shadow-md">
+            <div className="absolute top-4 left-5 right-5 text-left pointer-events-none">
+              <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-pink-300 font-bold block drop-shadow-sm">
                 ORIGINAL SCORE FROM THE
               </span>
               <span className="text-[10px] text-white/90 tracking-wider uppercase font-semibold">
@@ -108,10 +116,10 @@ export const PlayerArtwork = memo(function PlayerArtwork({
               </span>
             </div>
 
-            {/* Bottom Floating Music Badge with Heart */}
-            <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between pointer-events-none">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20">
-                <span className="w-2 h-2 rounded-full bg-[#FF2D6C] animate-ping" />
+            {/* Bottom Floating Romantic Badge */}
+            <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between pointer-events-none">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/50 border border-white/20">
+                <span className="w-2 h-2 rounded-full bg-[#FF2D6C]" />
                 <span className="text-[10px] font-mono tracking-widest text-pink-200 uppercase font-semibold">
                   Romantic Session
                 </span>

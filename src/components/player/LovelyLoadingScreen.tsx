@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
 interface LovelyLoadingScreenProps {
@@ -12,15 +12,15 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Smooth progress increment - calibrated to ~5 seconds so the quote can be read comfortably
+    // Smooth progress increment - calibrated to ~5 seconds
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onLoadingComplete, 500);
+          setTimeout(onLoadingComplete, 400);
           return 100;
         }
-        return prev + 1; // 100 ticks * 50ms = 5000ms (5 seconds)
+        return prev + 1; // 100 ticks * 50ms = 5000ms
       });
     }, 50);
 
@@ -30,13 +30,13 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeOut' } }}
       onClick={onLoadingComplete}
       className="fixed inset-0 z-50 bg-[#12071C] flex flex-col items-center justify-center p-6 text-white cursor-pointer select-none overflow-hidden"
     >
-      {/* Ambient Romantic Background Glows */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-gradient-to-tr from-[#FF2D6C]/30 via-[#9D267A]/25 to-transparent rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[340px] h-[240px] bg-[#FF4B7A]/20 rounded-full blur-[90px] pointer-events-none" />
+      {/* Ambient Romantic Background Glows (Static CSS Radial Gradients - Zero GPU lag) */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,45,108,0.22)_0%,transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(157,38,122,0.18)_0%,transparent_50%)] pointer-events-none" />
 
       {/* Floating Gentle Petals */}
       <div className="absolute top-16 left-8 text-pink-300/70 text-2xl animate-bounce">🌸</div>
@@ -45,26 +45,14 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
 
       {/* Center 3D Liquid Glass Heart Animation */}
       <div className="relative flex flex-col items-center justify-center">
-        {/* Pulsing Light Rings Behind Heart */}
-        <motion.div
-          animate={{
-            scale: [1, 1.35, 1],
-            opacity: [0.35, 0.7, 0.35],
-          }}
-          transition={{
-            duration: 2.2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-36 h-36 rounded-full bg-gradient-to-tr from-[#FF2D6C] to-[#FF8FA3] blur-2xl pointer-events-none"
-        />
+        {/* Soft Center Light Aura */}
+        <div className="absolute w-36 h-36 rounded-full bg-[#FF2D6C]/25 blur-xl pointer-events-none" />
 
         {/* 3D Glass Animated Heart with Perspective & Specular Highlights */}
         <motion.div
           animate={{
-            scale: [1, 1.08, 0.98, 1.12, 1],
-            rotateY: [0, 15, -15, 0],
-            rotateX: [0, -10, 10, 0],
+            scale: [1, 1.08, 0.98, 1.1, 1],
+            rotateY: [0, 12, -12, 0],
           }}
           transition={{
             duration: 2.8,
@@ -72,25 +60,20 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
             ease: 'easeInOut',
           }}
           style={{ perspective: 1000 }}
-          className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center drop-shadow-[0_15px_35px_rgba(255,45,108,0.65)] transform-gpu will-change-transform"
+          className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center transform-gpu will-change-transform"
         >
-          {/* Outer Liquid Glass Specular Bevel Heart SVG */}
-          <svg
-            viewBox="0 0 24 24"
-            className="w-full h-full fill-none filter drop-shadow-[0_0_20px_#FF2D6C]"
-          >
+          {/* Liquid Glass Heart SVG */}
+          <svg viewBox="0 0 24 24" className="w-full h-full fill-none">
             <defs>
-              {/* Radial gradient for 3D depth */}
               <radialGradient id="heart3dGradient" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stopColor="#FFF0F5" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#FFF0F5" stopOpacity="0.95" />
                 <stop offset="35%" stopColor="#FF4B7A" stopOpacity="0.95" />
                 <stop offset="70%" stopColor="#E01B5E" stopOpacity="0.98" />
                 <stop offset="100%" stopColor="#800A38" stopOpacity="1" />
               </radialGradient>
 
-              {/* Specular Rim Light Gradient */}
               <linearGradient id="heartRim" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.8" />
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
                 <stop offset="50%" stopColor="#FF8FA3" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#FF2D6C" stopOpacity="0.9" />
               </linearGradient>
@@ -108,33 +91,28 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
             <path
               d="M7.5 4.5c-1.5 0-2.8 1-3.2 2.4.6-.9 1.6-1.5 2.7-1.5 1.4 0 2.6.8 3.2 2 .5-1.7-1.1-2.9-2.7-2.9z"
               fill="white"
-              opacity="0.65"
+              opacity="0.7"
             />
           </svg>
 
           {/* Center Sparkle Icon */}
-          <Sparkles className="absolute w-6 h-6 text-white/90 animate-pulse drop-shadow" />
+          <Sparkles className="absolute w-6 h-6 text-white/95 animate-pulse" />
         </motion.div>
 
         {/* Album Label Typography */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-6 text-center"
-        >
+        <div className="mt-6 text-center">
           <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-pink-300 font-bold block mb-1">
             LOVELY ALBUM
           </span>
           <h2 className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-white">
             Romantic Melodies
           </h2>
-        </motion.div>
+        </div>
 
         {/* Glowing Progress Track */}
-        <div className="w-44 h-1 bg-white/15 rounded-full overflow-hidden mt-4 shadow-inner">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[#FF2D6C] to-[#FF8FA3] shadow-[0_0_10px_#FF2D6C]"
+        <div className="w-44 h-1 bg-white/20 rounded-full overflow-hidden mt-4">
+          <div
+            className="h-full bg-gradient-to-r from-[#FF2D6C] to-[#FF8FA3]"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -147,10 +125,10 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
           transition={{ type: 'spring', damping: 26, stiffness: 170 }}
           className="mt-7 max-w-[340px] px-4 text-center z-20 flex flex-col items-center"
         >
-          <p className="font-serif italic text-pink-100 text-sm sm:text-base leading-relaxed drop-shadow-[0_2px_14px_rgba(255,45,108,0.7)]">
+          <p className="font-serif italic text-pink-100 text-sm sm:text-base leading-relaxed">
             &ldquo;ke itna ameer toh nhi ki teri sari khawais poori kar saku, par maage tu toh waqt sara tere naam krdu&rdquo;
           </p>
-          <p className="font-serif italic text-pink-300 text-xs sm:text-sm mt-1.5 tracking-wide drop-shadow-[0_1px_8px_rgba(255,45,108,0.5)]">
+          <p className="font-serif italic text-pink-300 text-xs sm:text-sm mt-1.5 tracking-wide">
             - sagar <span className="text-pink-400">♡</span>
           </p>
         </motion.div>

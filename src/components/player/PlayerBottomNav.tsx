@@ -15,7 +15,7 @@ export const PlayerBottomNav = memo(function PlayerBottomNav({
   onToggleFavorite,
 }: PlayerBottomNavProps) {
   return (
-    <nav className="fixed bottom-3 left-6 right-6 z-40 max-w-[320px] mx-auto rounded-full bg-white/[0.09] backdrop-blur-md border border-white/20 px-8 py-2.5 flex items-center justify-between shadow-[0_10px_35px_rgba(0,0,0,0.5)] select-none transform-gpu contain-paint">
+    <nav className="fixed bottom-3 left-6 right-6 z-40 max-w-[320px] mx-auto rounded-full bg-[#180A26]/90 border border-white/20 px-8 py-2.5 flex items-center justify-between shadow-[0_8px_30px_rgba(0,0,0,0.6)] select-none transform-gpu contain-paint">
       {/* 1. Home (Active with Hot Pink Glow) */}
       <button
         type="button"
