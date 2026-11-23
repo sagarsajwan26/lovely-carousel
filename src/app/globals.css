@@ -41,6 +41,7 @@
 /* Fast tap response on mobile touch devices */
 button, input, a {
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Liquid Glass Background Ambient Radial Glow */

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 
@@ -10,41 +10,58 @@ interface LovelyLoadingScreenProps {
 
 export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenProps) {
   const [progress, setProgress] = useState(0);
+  const [isExiting, setIsExiting] = useState(false);
+  const completedRef = useRef(false);
+
+  const handleComplete = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    setIsExiting(true);
+    onLoadingComplete();
+  }, [onLoadingComplete]);
 
   useEffect(() => {
-    // Smooth progress increment - calibrated to ~5 seconds
+    // Smooth progress increment - calibrated to ~3.6 seconds for comfortable reading
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onLoadingComplete, 400);
           return 100;
         }
-        return prev + 1; // 100 ticks * 50ms = 5000ms
+        return prev + 1; // 100 * 36ms = 3600ms
       });
-    }, 50);
+    }, 36);
 
     return () => clearInterval(interval);
-  }, [onLoadingComplete]);
+  }, []);
+
+  useEffect(() => {
+    if (progress >= 100 && !completedRef.current) {
+      handleComplete();
+    }
+  }, [progress, handleComplete]);
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeOut' } }}
-      onClick={onLoadingComplete}
-      className="fixed inset-0 z-50 bg-[#12071C] flex flex-col items-center justify-center p-6 text-white cursor-pointer select-none overflow-hidden"
+      exit={{ opacity: 0, transition: { duration: 0.35, ease: 'easeOut' } }}
+      onClick={handleComplete}
+      onTouchEnd={handleComplete}
+      className={`fixed inset-0 z-50 bg-[#12071C] flex flex-col items-center justify-center p-6 text-white cursor-pointer select-none overflow-hidden ${
+        isExiting ? 'pointer-events-none opacity-0' : 'pointer-events-auto'
+      }`}
     >
       {/* Ambient Romantic Background Glows (Static CSS Radial Gradients - Zero GPU lag) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,45,108,0.22)_0%,transparent_60%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(157,38,122,0.18)_0%,transparent_50%)] pointer-events-none" />
 
       {/* Floating Gentle Petals */}
-      <div className="absolute top-16 left-8 text-pink-300/70 text-2xl animate-bounce">🌸</div>
-      <div className="absolute bottom-24 right-8 text-pink-400/60 text-xl animate-pulse">🌸</div>
-      <div className="absolute top-1/4 right-12 text-pink-300/60 text-lg">🌹</div>
+      <div className="absolute top-16 left-8 text-pink-300/70 text-2xl animate-bounce pointer-events-none">🌸</div>
+      <div className="absolute bottom-24 right-8 text-pink-400/60 text-xl animate-pulse pointer-events-none">🌸</div>
+      <div className="absolute top-1/4 right-12 text-pink-300/60 text-lg pointer-events-none">🌹</div>
 
       {/* Center 3D Liquid Glass Heart Animation */}
-      <div className="relative flex flex-col items-center justify-center">
+      <div className="relative flex flex-col items-center justify-center pointer-events-none">
         {/* Soft Center Light Aura */}
         <div className="absolute w-36 h-36 rounded-full bg-[#FF2D6C]/25 blur-xl pointer-events-none" />
 
@@ -112,7 +129,7 @@ export function LovelyLoadingScreen({ onLoadingComplete }: LovelyLoadingScreenPr
         {/* Glowing Progress Track */}
         <div className="w-44 h-1 bg-white/20 rounded-full overflow-hidden mt-4">
           <div
-            className="h-full bg-gradient-to-r from-[#FF2D6C] to-[#FF8FA3]"
+            className="h-full bg-gradient-to-r from-[#FF2D6C] to-[#FF8FA3] transition-all duration-75"
             style={{ width: `${progress}%` }}
           />
         </div>
