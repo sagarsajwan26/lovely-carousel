@@ -106,8 +106,8 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* 1. Atmospheric Romantic Background (Wallpaper.png) */}
-      <PlayerBackground />
+      {/* 1. Atmospheric Romantic Background with Dynamic Song Imagery */}
+      <PlayerBackground activeCoverImage={song.coverImage} />
 
       {/* 2. Main Central Device Container */}
       <div className="relative z-10 w-full max-w-[390px] px-4 flex flex-col justify-between flex-1">
