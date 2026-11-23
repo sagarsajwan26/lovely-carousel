@@ -19,33 +19,33 @@ export const PlayerBottomNav = memo(function PlayerBottomNav({
       {/* 1. Home (Active with Hot Pink Glow) */}
       <button
         type="button"
-        className="flex flex-col items-center gap-0.5 text-xs font-medium text-[#FF2D6C] active:scale-90 transition-transform transform-gpu"
+        className="flex flex-col items-center gap-0.5 text-xs font-medium text-[#FF2D6C] cursor-pointer active:scale-90 transition-transform transform-gpu"
         title="Home"
       >
-        <Home className="w-4 h-4 text-[#FF2D6C]" />
-        <span className="text-[10px] text-[#FF2D6C] font-semibold">Home</span>
+        <Home className="w-4 h-4 text-[#FF2D6C] pointer-events-none" />
+        <span className="text-[10px] text-[#FF2D6C] font-semibold pointer-events-none">Home</span>
       </button>
 
       {/* 2. Playlist */}
       <button
         type="button"
         onClick={onOpenPlaylist}
-        className="flex flex-col items-center gap-0.5 text-xs font-medium text-white/70 hover:text-white active:scale-90 transition-all transform-gpu"
+        className="flex flex-col items-center gap-0.5 text-xs font-medium text-white/70 hover:text-white cursor-pointer active:scale-90 transition-all transform-gpu"
         title="Playlist"
       >
-        <Music className="w-4 h-4" />
-        <span className="text-[10px]">Playlist</span>
+        <Music className="w-4 h-4 pointer-events-none" />
+        <span className="text-[10px] pointer-events-none">Playlist</span>
       </button>
 
       {/* 3. Favorites */}
       <button
         type="button"
         onClick={onToggleFavorite}
-        className="flex flex-col items-center gap-0.5 text-xs font-medium text-white/70 hover:text-white active:scale-90 transition-all transform-gpu"
+        className="flex flex-col items-center gap-0.5 text-xs font-medium text-white/70 hover:text-white cursor-pointer active:scale-90 transition-all transform-gpu"
         title="Favorites"
       >
-        <Heart className={`w-4 h-4 ${isFavorited ? 'text-[#FF4B7A] fill-[#FF4B7A]' : ''}`} />
-        <span className="text-[10px]">Favorites</span>
+        <Heart className={`w-4 h-4 pointer-events-none ${isFavorited ? 'text-[#FF4B7A] fill-[#FF4B7A]' : ''}`} />
+        <span className="text-[10px] pointer-events-none">Favorites</span>
       </button>
     </nav>
   );

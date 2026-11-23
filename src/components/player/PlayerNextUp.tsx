@@ -56,25 +56,24 @@ export const PlayerNextUp = memo(function PlayerNextUp({
             e.stopPropagation();
             onPlayNext();
           }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FF2D6C] hover:bg-[#FF4B7A] text-white text-xs font-semibold border border-white/25 active:scale-90 transition-all shadow-md transform-gpu"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FF2D6C] hover:bg-[#FF4B7A] text-white text-xs font-semibold border border-white/25 active:scale-90 transition-all shadow-md transform-gpu cursor-pointer"
           title="Play next song immediately"
         >
-          <Play className="w-3 h-3 fill-white" />
-          <span>Play Next</span>
+          <Play className="w-3.5 h-3.5 fill-white pointer-events-none" />
+          <span className="pointer-events-none">Play Next</span>
         </button>
 
-        {/* Circular Playlist Menu Button (≡) */}
+        {/* View Queue Pill Button */}
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             onOpenPlaylist();
           }}
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 transition-colors border border-white/15 active:scale-90 transform-gpu"
-          aria-label="Open Playlist"
-          title="Open full playlist"
+          className="px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs font-medium border border-white/15 active:scale-90 transition-all transform-gpu cursor-pointer"
+          title="View full playlist"
         >
-          <span className="text-sm leading-none font-bold">≡</span>
+          <span className="pointer-events-none">Queue</span>
         </button>
       </div>
     </div>
