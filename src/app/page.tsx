@@ -14,22 +14,16 @@ import { PlayerNextUp } from '@/components/player/PlayerNextUp';
 import { PlayerBottomNav } from '@/components/player/PlayerBottomNav';
 import { LovelyLoadingScreen } from '@/components/player/LovelyLoadingScreen';
 
-// Dynamic import for modal drawer: Saves critical path bundle size and deferred execution
+// Dynamic import for modal drawer: Saves critical path bundle size
 const PlayerDrawer = dynamic(
   () => import('@/components/player/PlayerDrawer').then((m) => m.PlayerDrawer),
   { ssr: false }
 );
 
 export default function HomePage() {
-  // Production-Grade Fine-Grained Selectors:
-  // Note: currentTime and duration are intentionally NOT subscribed to here!
-  // Subscribing to them inside PlayerControls guarantees that timeupdate ticks NEVER re-render HomePage!
   const currentSong = useAudioStore((s) => s.currentSong);
   const isPlaying = useAudioStore((s) => s.isPlaying);
   const selectedSongIndex = useAudioStore((s) => s.selectedSongIndex);
-  const setSelectedSongIndex = useAudioStore((s) => s.setSelectedSongIndex);
-  const nextSongAction = useAudioStore((s) => s.nextSong);
-  const prevSongAction = useAudioStore((s) => s.prevSong);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -42,40 +36,44 @@ export default function HomePage() {
 
   // Next Song
   const currentIndex = ROMANTIC_SONGS.findIndex((s) => s.id === song.id);
-  const nextSongItem = ROMANTIC_SONGS[(currentIndex + 1) % ROMANTIC_SONGS.length];
+  const validIndex = currentIndex !== -1 ? currentIndex : selectedSongIndex;
+  const nextSongItem = ROMANTIC_SONGS[(validIndex + 1) % ROMANTIC_SONGS.length];
 
+  // Direct, rock-solid Play / Pause toggle
   const handleTogglePlay = useCallback(() => {
-    if (isPlaying) {
+    const { isPlaying: playing, currentSong: active } = useAudioStore.getState();
+    if (playing) {
       audioEngine.pause();
     } else {
-      audioEngine.loadAndPlay(song);
-    }
-  }, [isPlaying, song]);
-
-  const handleNext = useCallback(() => {
-    setSlideDirection(1);
-    if (isShuffle) {
-      const randomIndex = Math.floor(Math.random() * ROMANTIC_SONGS.length);
-      const targetSong = ROMANTIC_SONGS[randomIndex];
-      setSelectedSongIndex(randomIndex);
-      audioEngine.loadAndPlay(targetSong);
-    } else {
-      nextSongAction();
-      const next = useAudioStore.getState().currentSong;
-      if (next) {
-        audioEngine.loadAndPlay(next);
+      if (active) {
+        audioEngine.play();
+      } else {
+        audioEngine.loadAndPlay(song);
       }
     }
-  }, [isShuffle, nextSongAction, setSelectedSongIndex]);
+  }, [song]);
 
+  // Direct Next Song trigger (used by Controls, Artwork swipe, and Next Song Bar)
+  const handleNext = useCallback(() => {
+    setSlideDirection(1);
+    const { selectedSongIndex: currIdx, setSelectedSongIndex } = useAudioStore.getState();
+    const nextIdx = isShuffle
+      ? Math.floor(Math.random() * ROMANTIC_SONGS.length)
+      : (currIdx + 1) % ROMANTIC_SONGS.length;
+    const targetSong = ROMANTIC_SONGS[nextIdx];
+    setSelectedSongIndex(nextIdx);
+    audioEngine.loadAndPlay(targetSong);
+  }, [isShuffle]);
+
+  // Direct Previous Song trigger
   const handlePrev = useCallback(() => {
     setSlideDirection(-1);
-    prevSongAction();
-    const prev = useAudioStore.getState().currentSong;
-    if (prev) {
-      audioEngine.loadAndPlay(prev);
-    }
-  }, [prevSongAction]);
+    const { selectedSongIndex: currIdx, setSelectedSongIndex } = useAudioStore.getState();
+    const prevIdx = (currIdx - 1 + ROMANTIC_SONGS.length) % ROMANTIC_SONGS.length;
+    const targetSong = ROMANTIC_SONGS[prevIdx];
+    setSelectedSongIndex(prevIdx);
+    audioEngine.loadAndPlay(targetSong);
+  }, []);
 
   const handleSeek = useCallback((time: number) => {
     audioEngine.seek(time);
@@ -85,10 +83,10 @@ export default function HomePage() {
     (index: number, selectedSong: typeof song) => {
       setSlideDirection(index > selectedSongIndex ? 1 : -1);
       setShowDrawer(false);
-      setSelectedSongIndex(index);
+      useAudioStore.getState().setSelectedSongIndex(index);
       audioEngine.loadAndPlay(selectedSong);
     },
-    [selectedSongIndex, setSelectedSongIndex]
+    [selectedSongIndex]
   );
 
   const handleOpenPlaylist = useCallback(() => setShowDrawer(true), []);
@@ -126,7 +124,7 @@ export default function HomePage() {
           {/* Song Info & Romantic Quote (Smooth Landing Destination from Loading) */}
           <PlayerInfo song={song} />
 
-          {/* Scrubber & 5-Button Controls with Fine-Grained Internal Selector */}
+          {/* Scrubber & 5-Button Controls */}
           <PlayerControls
             isShuffle={isShuffle}
             onTogglePlay={handleTogglePlay}
